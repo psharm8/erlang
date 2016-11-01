@@ -1,5 +1,5 @@
 -module(interp).
--export([scanAndParse/1,runFile/1,runStr/1]).
+-export([scanAndParse/1, runFile/1, runStr/1]).
 -include("types.hrl").
 
 loop(InFile,Acc) ->
@@ -34,7 +34,7 @@ scanAndParseString(String) ->
 -spec runStr(string()) -> valType().
 runStr(String) ->
     {Result, AST} = scanAndParseString(String),
-    case Result  of 
+    case Result  of
     	ok -> valueOf(AST,env:new());
     	_ -> io:format("Parse error~n")
     end.
@@ -50,4 +50,20 @@ boolVal2Bool({bool, B}) ->
 
 -spec valueOf(expType(),envType()) -> valType().
 valueOf(Exp,Env) ->
-    %% complete
+    case Exp of
+        {numExp,{num, _, N}} -> numVal2Num({num, N});
+        {bool, T} -> boolVal2Bool(T);
+        {isZeroExp,T} -> {bool, valueOf(T, Env) == 0};
+        {plusExp,L,R} -> {num, valueOf(L, Env) + valueOf(R, Env)};
+        {diffExp,L,R} -> {num, valueOf(L, Env) - valueOf(R, Env)};
+        {idExp,{id,_,Id}} -> env:lookup(Env, Id);
+        {letExp,{id, _, Id}, E, In} ->
+            Env2 = env:add(Env, Id, valueOf(E, Env)),
+            valueOf(In, Env2);
+        {procExp,{id, _, Id}, E} -> {proc, Id, E, Env};
+        {appExp,I, E} ->
+            {proc, Id, PExp, PEnv}= valueOf(I, Env),
+            Env2 = env:add(PEnv, Id, valueOf(E, Env)),
+            valueOf(PExp, Env2);
+        _ -> io:format("Fail :(~n")
+    end.
