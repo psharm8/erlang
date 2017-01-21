@@ -7,7 +7,7 @@
 %%% Created : 17. Nov 2016 15:35
 %%%-------------------------------------------------------------------
 -module(watcher).
--author(["Puneet Sharma"]).
+-author(["Puneet Sharma", "Kunal Dhaimade"]).
 
 %% API
 -export([setup/0]).
