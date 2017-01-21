@@ -7,7 +7,7 @@
 %%% Created : 06. Nov 2016 18:29
 %%%-------------------------------------------------------------------
 -module(sensor).
--author("Puneet Sharma").
+-author(["Puneet Sharma", "Kunal Dhaimade"]).
 
 %% API
 -export([start/2]).
